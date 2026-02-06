@@ -102,6 +102,10 @@ p {
     color: black;
 }
 
+.card {
+    text-align: center;
+}
+
 .tabs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
