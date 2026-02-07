@@ -31,11 +31,24 @@ Vue.component('notes', {
                 <div><h2 style="color: red">Начато</h2>
                 <div class="card" v-for="item in notes" v-if="item.notesProcess === 'new'">
                     <h3>{{item.name}}</h3>
-                    <div>
+                    <div class="card-notes">
+                        <p @click="note(item, i)" v-for="i in item.notes" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s;' : '')">{{i.name}}</p>
                     </div>
                 </div></div>
-                <h2 style="color: orange">Еще чуть чуть</h2>
-                <h2 style="color: green">Выполнено</h2>
+                <div><h2 style="color: orange">еще чуть чуть</h2>
+                <div class="card" v-for="item in notes" v-if="item.notesProcess === 'progress'">
+                    <h3>{{item.name}}</h3>
+                    <div class="card-notes">
+                        <p @click="note(item, i)" v-for="i in item.notes" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s;' : '')">{{i.name}}</p>
+                    </div>
+                </div></div>
+                <div><h2 style="color: green">выполненые</h2>
+                <div class="card" v-for="item in notes" v-if="item.notesProcess === 'complete'">
+                    <h3>{{item.name}}</h3>
+                    <div class="card-notes">
+                        <p @click="note(item, i)" v-for="i in item.notes" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s;' : '')">{{i.name}}</p>
+                    </div>
+                </div></div>
             </div>
         </div>
     `,
@@ -92,10 +105,18 @@ Vue.component('notes', {
 
                 for (let i = 1; i < this.inputCount + 1; i++) {
                     if (this.notesTask[i]) {
-                        newNotes.notes.push(this.notesTask[i]);
+                        let newPin = {
+                            name: this.notesTask[i],
+                            complete: false
+                        };
+                        newNotes.notes.push(newPin);
                         this.notesTask[i] = null;
                     } else {
-                        newNotes.notes.push('Задача без имени');
+                        let newPin = {
+                            name: 'Задача без имени',
+                            complete: false
+                        };
+                        newNotes.notes.push(newPin);
                     }
                 }
 
@@ -105,6 +126,21 @@ Vue.component('notes', {
             } else {
                 this.errors = 'у вас больше трех начатых заметок';
             }
+        },
+        note(notes, item) {
+            if (item.complete) {}
+            else item.complete = true;
+
+            let sum = 0.0;
+            for (let i = 0; i < notes.notes.length; i++) {
+                if(notes.notes[i].complete === true) {sum++}
+            }
+            console.log(sum);
+
+            if (sum / notes.notes.length  > 0.5) {notes.notesProcess = 'progress'}
+            if (sum / notes.notes.length  === 1) {notes.notesProcess = 'complete'}
+            console.log(sum /notes.notes.length);
+            sum = 0.0;
         },
     },
 })

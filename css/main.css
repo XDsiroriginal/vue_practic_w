@@ -103,10 +103,32 @@ p {
 }
 
 .card {
+    width: 60%;
     text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid black;
+    margin: 20px auto;
 }
 
 .tabs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+}
+
+.card-notes p{
+    display: flex;
+    height: 25px;
+    margin: 10px 0;
+    background-color: lightcoral;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.complete {
+    background-color: lightgreen;
+
+
 }
