@@ -28,14 +28,16 @@ Vue.component('notes', {
                 </div>
             </div>
             <div class="tabs">
-                <div><h2 style="color: red">Начато</h2>
+                <div style="position: relative">
+                <h2 style="color: red">Начато</h2>
+                <div class="taskblock" v-show="disableFirstColumns === true"><p>У вас заблокированы задачи</p></div>
                 <div class="card" v-for="item in notes" v-if="item.notesProcess === 'new'">
                     <h3>{{item.name}}</h3>
                     <div class="card-notes">
                         <p v-for="i in item.notes" @click="(!i.complete ? checkOnFree(item, i) : '')" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s; cursor: default;' : '')">{{i.name}}</p>
-<!--                        сделать сереньким когда вторая заполнена короче вот-->
                     </div>
-                </div></div>
+                </div>
+                </div>
                 <div><h2 style="color: orange">еще чуть чуть</h2>
                 <div class="card" v-for="item in notes" v-if="item.notesProcess === 'progress'">
                     <h3>{{item.name}}</h3>
@@ -59,6 +61,7 @@ Vue.component('notes', {
             inputCount: 3,
             errors: null,
             displayCreateNewNotes: false,
+            disableFirstColumns: false,
 
             notesName: null,
             notesTask: ['','','','',''],
@@ -144,6 +147,7 @@ Vue.component('notes', {
 
             console.log(sum /notes.notes.length);
             sum = 0.0;
+            this.disableFirstColumns = false;
         },
         checkOnFree(item, i) {
             let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
@@ -151,10 +155,13 @@ Vue.component('notes', {
             if (progressNotesCount < 5) {
                 this.note(item, i);
                 this.errors = null;
+                this.displayCreateNewNotes = true;
+                this.disableFirstColumns = false;
             } else {
                 this.errors = 'Во втором столбце не может быть больше 5 заметок';
+                this.disableFirstColumns = true;
             }
-        }
+        },
     },
 })
 

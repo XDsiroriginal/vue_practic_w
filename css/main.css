@@ -129,6 +129,22 @@ p {
 
 .complete {
     background-color: lightgreen;
+}
 
+.taskblock {
+    position: absolute;
+    background-color: gray;
+    opacity: 0.8;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
 
+.taskblock p {
+    font-size: 30px;
+    font-weight: bold;
 }
