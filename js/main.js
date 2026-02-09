@@ -51,6 +51,7 @@ Vue.component('notes', {
                     <div class="card-notes">
                         <p :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s; cursor: default;' : '')" v-for="i in item.notes" >{{i.name}}</p>
                     </div>
+                    <p style="color: gray">{{item.notesDate}}</p>
                 </div></div>
             </div>
         </div>
@@ -104,7 +105,8 @@ Vue.component('notes', {
                 let newNotes = {
                     name: this.notesName,
                     notes: [],
-                    notesProcess: 'new'
+                    notesProcess: 'new',
+                    notesDate: null
                 };
 
                 for (let i = 1; i < this.inputCount + 1; i++) {
@@ -141,16 +143,30 @@ Vue.component('notes', {
             }
             console.log(sum);
 
-            if (sum / notes.notes.length  > 0.5) {notes.notesProcess = 'progress'}
+            let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
+
+            if (sum / notes.notes.length  > 0.5 && progressNotesCount <= 4)
+            {notes.notesProcess = 'progress'}
 
             if (sum / notes.notes.length  === 1 ) {notes.notesProcess = 'complete'}
 
             console.log(sum /notes.notes.length);
             sum = 0.0;
             this.disableFirstColumns = false;
+
+            notes.notesDate = Date();
+            console.log(notes.notesDate + ' ' + Date.now());
+            this.saveData()
         },
         checkOnFree(item, i) {
             let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
+
+            let sum = 0.0;
+            for (let j = 0; j < item.notes.length; j++) {
+                if(item.notes[j].complete === true) {sum++}
+            }
+
+            console.log(sum);
 
             if (progressNotesCount < 5) {
                 this.note(item, i);
@@ -159,10 +175,19 @@ Vue.component('notes', {
                 this.disableFirstColumns = false;
             } else {
                 this.errors = 'Во втором столбце не может быть больше 5 заметок';
-                this.disableFirstColumns = true;
+                if (sum / item.notes.length < 0.5) {
+                    this.note(item, i);
+                }
+                else {
+                    this.disableFirstColumns = true;
+                }
             }
         },
+        saveData() { localStorage.setItem('notes', JSON.stringify(this.notes)) }
     },
+    mounted() {
+        this.notes = JSON.parse(localStorage.getItem('notes'))
+    }
 })
 
 let app = new Vue({
