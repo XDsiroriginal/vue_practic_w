@@ -25,13 +25,14 @@ Vue.component('notes', {
                         <input v-model="notesName" class="input-box name " type="text" placeholder="Имя заметки">
                         <input v-for="item in inputCount" type="text" :placeholder='inputPlaceholder(item)' v-model="notesTask[item]">
                     </div>
+                    <input v-model="notesColor" type="color" class="create-new-notes-box add-new-input">
                 </div>
             </div>
             <div class="tabs">
                 <div style="position: relative">
                 <h2 style="color: red">Начато</h2>
-                <div class="taskblock" v-show="disableFirstColumns === true"><p>У вас заблокированы задачи</p></div>
-                <div class="card" v-for="item in notes" v-if="item.notesProcess === 'new'">
+                <div class="taskblock" v-show="disableFirstColumns === true" :style="notes.color"><p>У вас заблокированы задачи</p></div>
+                <div :style="{borderColor: item.notesColor}" class="card" v-for="item in notes" v-if="item.notesProcess === 'new'">
                     <h3>{{item.name}}</h3>
                     <div class="card-notes">
                         <p v-for="i in item.notes" @click="(!i.complete ? checkOnFree(item, i) : '')" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s; cursor: default;' : '')">{{i.name}}</p>
@@ -39,14 +40,14 @@ Vue.component('notes', {
                 </div>
                 </div>
                 <div><h2 style="color: orange">еще чуть чуть</h2>
-                <div class="card" v-for="item in notes" v-if="item.notesProcess === 'progress'">
+                <div :style="{borderColor: item.notesColor}" class="card" v-for="item in notes" v-if="item.notesProcess === 'progress'">
                     <h3>{{item.name}}</h3>
                     <div class="card-notes">
                         <p v-for="i in item.notes" @click="(!i.complete ? note(item, i) : errors='у вас заполнены столбцы')" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s; cursor: default;' : '')">{{i.name}}</p>
                     </div>
                 </div></div>
                 <div><h2 style="color: green">выполненые</h2>
-                <div class="card" v-for="item in notes" v-if="item.notesProcess === 'complete'">
+                <div :style="{borderColor: item.notesColor}" class="card" v-for="item in notes" v-if="item.notesProcess === 'complete'">
                     <h3>{{item.name}}</h3>
                     <div class="card-notes">
                         <p :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s; cursor: default;' : '')" v-for="i in item.notes" >{{i.name}}</p>
@@ -65,6 +66,7 @@ Vue.component('notes', {
             disableFirstColumns: false,
 
             notesName: null,
+            notesColor: null,
             notesTask: ['','','','',''],
         }
     },
@@ -106,21 +108,24 @@ Vue.component('notes', {
                     name: this.notesName,
                     notes: [],
                     notesProcess: 'new',
-                    notesDate: null
+                    notesDate: null,
+                    notesColor: this.notesColor,
                 };
 
                 for (let i = 1; i < this.inputCount + 1; i++) {
                     if (this.notesTask[i]) {
                         let newPin = {
                             name: this.notesTask[i],
-                            complete: false
+                            complete: false,
                         };
                         newNotes.notes.push(newPin);
                         this.notesTask[i] = null;
+                        this.notesColor = null;
                     } else {
                         let newPin = {
                             name: 'Задача без имени',
-                            complete: false
+                            complete: false,
+                            notesColor: '#000000'
                         };
                         newNotes.notes.push(newPin);
                     }
@@ -186,7 +191,8 @@ Vue.component('notes', {
         saveData() { localStorage.setItem('notes', JSON.stringify(this.notes)) }
     },
     mounted() {
-        this.notes = JSON.parse(localStorage.getItem('notes'))
+        const savedNotes = localStorage.getItem('notes');
+        this.notes = savedNotes ? JSON.parse(savedNotes) : [];
     }
 })
 
