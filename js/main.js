@@ -46,7 +46,7 @@ Vue.component('notes', {
                 <div class="card" v-for="item in notes" v-if="item.notesProcess === 'complete'">
                     <h3>{{item.name}}</h3>
                     <div class="card-notes">
-                        <p @click="note(item, i)" v-for="i in item.notes" :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s;' : '')">{{i.name}}</p>
+                        <p :style="(i.complete ? 'background-color: lightgreen; transition: 0.2s; cursor: default;' : '')" @click="(progressNotes <= 5 ? note(item, i): alert('у вас заняты все места для заметок')"" v-for="i in item.notes" >{{i.name}}</p>
                     </div>
                 </div></div>
             </div>
@@ -138,11 +138,24 @@ Vue.component('notes', {
             console.log(sum);
 
             if (sum / notes.notes.length  > 0.5) {notes.notesProcess = 'progress'}
-            if (sum / notes.notes.length  === 1) {notes.notesProcess = 'complete'}
+
+            if (sum / notes.notes.length  === 1 ) {notes.notesProcess = 'complete'}
+
             console.log(sum /notes.notes.length);
             sum = 0.0;
         },
     },
+    computed: {
+        progressNotes() {
+            let countProgressNote = 0;
+            for (i = 0; i < this.notes.length; i++) {
+                if (this.notesTask[i].notesProcess === 'progress') {
+                    countProgressNote++;
+                }
+            }
+            return countProgressNote;
+        }
+    }
 })
 
 let app = new Vue({
