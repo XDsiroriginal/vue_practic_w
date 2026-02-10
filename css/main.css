@@ -43,7 +43,7 @@ p {
     border-radius: 10px;
 }
 
-.create-new-notes-box .add-new-input {
+.create-new-notes-box-add-new-input {
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -53,14 +53,14 @@ p {
     font-size: 20px;
 }
 
-.create-new-notes-box .content {
+.create-new-notes-box-content {
     margin: 20px 0;
     display: flex;
     gap: 20px;
     justify-content: center;
 }
 
-.create-new-notes-box  .input-box {
+.create-new-notes-box{
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -70,13 +70,13 @@ p {
     padding: 10px;
 }
 
-.create-new-notes-box .button {
+.create-new-notes-box-button {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.create-new-notes-box .exit {
+.create-new-notes-box-exit {
     width: 40px;
     height: 40px;
     background-color: red;
@@ -84,7 +84,7 @@ p {
     color: white;
 }
 
-.create-new-notes-box .add {
+.create-new-notes-box-add {
     width: 40px;
     height: 40px;
     background-color: green;
@@ -92,13 +92,13 @@ p {
     color: white;
 }
 
-.create-new-notes-box .button-input {
+.create-new-notes-box-button-input {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.input-box .name::placeholder {
+.input-box-name::placeholder {
     color: black;
 }
 
@@ -147,4 +147,31 @@ p {
 .taskblock p {
     font-size: 30px;
     font-weight: bold;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.create-new-notes-box .color-picker {
+    width: 40px;
+    height: 40px;
+}
+
+.create-new-notes-box-back  {
+    position: relative;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    border: 2px solid black;
+    margin: 0;
 }

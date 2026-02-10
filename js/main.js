@@ -7,25 +7,31 @@ Vue.component('notes', {
             <div v-show="!displayCreateNewNotes" @click="displayCreateNewNotes = true" class="create-new-notes-button">
                 <p>Создать новую заметку</p>
             </div>
-            <div v-show="displayCreateNewNotes" class="create-new-notes-box">
-                <p>Создание новой заметки</p>
-                <p v-show="errors" style="margin: 20px 0">{{errors}}</p>
-                <div class="create-new-notes-box content">
-                    <div class="create-new-notes-box button">
-                        <div class="create-new-notes-box button-input">
-                            <button @click="addInput" class="create-new-notes-box add-new-input"><p>+</p></button>
-                            <button @click="removeInput" class="create-new-notes-box add-new-input"><p>-</p></button>
+            <div v-if="displayCreateNewNotes" class="modal-overlay" @click.self="displayCreateNewNotes = false">
+                
+                <div class="create-new-notes-box-back">
+                    <p class="modal-title">Создание новой заметки</p>
+                    <p v-show="errors" style="margin: 20px 0; color: red;">{{errors}}</p>
+                    
+                    <div class="create-new-notes-box-content">
+                        <div class="create-new-notes-box-button">
+                            <div class="create-new-notes-box-button-input">
+                                <button @click="addInput" class="create-new-notes-box-add-new-input"><p>+</p></button>
+                                <button @click="removeInput" class="create-new-notes-box-add-new-input"><p>-</p></button>
+                            </div>
+                            <div class="create-new-notes-box-button-input">
+                                <button @click="displayCreateNewNotes = false" class="create-new-notes-box-exit"><p>X</p></button>
+                                <button @click="notesSave" class="create-new-notes-box-add"><p>✓</p></button>
+                            </div>
                         </div>
-                        <div class="button-input">
-                            <button @click="displayCreateNewNotes = false" class="create-new-notes-box exit"><p>X</p></button>
-                            <button @click="notesSave" class="create-new-notes-box add"><p>✓</p></button>
+                        
+                        <div class="create-new-notes-box input-box">
+                            <input v-model="notesName" class="input-box-name" type="text" placeholder="Имя заметки">
+                            <input v-for="item in inputCount" :key="item" type="text" :placeholder="inputPlaceholder(item)" v-model="notesTask[item]">
                         </div>
+                        
+                        <input v-model="notesColor" type="color" class="create-new-notes-box color-picker">
                     </div>
-                    <div class="create-new-notes-box input-box">
-                        <input v-model="notesName" class="input-box name " type="text" placeholder="Имя заметки">
-                        <input v-for="item in inputCount" type="text" :placeholder='inputPlaceholder(item)' v-model="notesTask[item]">
-                    </div>
-                    <input v-model="notesColor" type="color" class="create-new-notes-box add-new-input">
                 </div>
             </div>
             <div class="tabs">
