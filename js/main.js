@@ -1,5 +1,16 @@
 let eventBus = new Vue()
 
+function getLuminance(hex) {
+    hex = hex.replace(/^#/, '');
+
+    let r = parseInt(hex.substring(0, 2), 16) / 255;
+    let g = parseInt(hex.substring(2, 4), 16) / 255;
+    let b = parseInt(hex.substring(4, 6), 16) / 255;
+
+    let luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+    return luminance;
+}
+
 Vue.component('notes', {
     template: `
         <div>
@@ -7,8 +18,7 @@ Vue.component('notes', {
             <div v-show="!displayCreateNewNotes" @click="displayCreateNewNotes = true" class="create-new-notes-button">
                 <p>Создать новую заметку</p>
             </div>
-            <div v-if="displayCreateNewNotes" class="modal-overlay" @click.self="displayCreateNewNotes = false">
-                
+            <div v-if="displayCreateNewNotes" class="modal-overlay" @click.self="displayCreateNewNotes = false">  
                 <div class="create-new-notes-box-back">
                     <p class="modal-title">Создание новой заметки</p>
                     <p v-show="errors" style="margin: 20px 0; color: red;">{{errors}}</p>
@@ -29,14 +39,18 @@ Vue.component('notes', {
                             <input v-model="notesName" class="input-box-name" type="text" placeholder="Имя заметки">
                             <input v-for="item in inputCount" :key="item" type="text" :placeholder="inputPlaceholder(item)" v-model="notesTask[item]">
                         </div>
-                        
                         <input v-model="notesColor" type="color" class="create-new-notes-box color-picker">
                     </div>
                 </div>
             </div>
+            <div @click="sortedCard" class="sorted-box">
+            <p>sorted</p>
+            </div>  
             <div class="tabs">
                 <div style="position: relative">
+                <div>
                 <h2 style="color: red">Начато</h2>
+                </div>
                 <div class="taskblock" v-show="disableFirstColumns === true" :style="notes.color"><p>У вас заблокированы задачи</p></div>
                 <div :style="{borderColor: item.notesColor}" class="card" v-for="item in notes" v-if="item.notesProcess === 'new'">
                     <h3>{{item.name}}</h3>
@@ -187,6 +201,14 @@ Vue.component('notes', {
             });
             this.saveData();
         },
+        sortedCard() {
+            this.notes.sort((a, b) => {
+                const lumA = getLuminance(a.notesColor || '#000000');
+                const lumB = getLuminance(b.notesColor || '#000000');
+
+                return lumA - lumB;
+            });
+        },
         checkOnFree(item, i) {
             let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
             let sum = 0.0;
@@ -198,7 +220,6 @@ Vue.component('notes', {
             if (progressNotesCount < 5) {
                 this.note(item, i);
                 this.errors = null;
-                this.displayCreateNewNotes = true;
                 this.disableFirstColumns = false;
             } else {
                 this.errors = 'Во втором столбце не может быть больше 5 заметок';
