@@ -70,6 +70,13 @@ Vue.component('notes', {
             notesTask: ['','','','',''],
         }
     },
+    watch: {
+        disableFirstColumns(item) {
+            if (item === false) {
+                this.moveEligibleNotes();
+            }
+        }
+    },
     methods: {
         inputPlaceholder(item) {
             return 'task: ' + item;
@@ -141,36 +148,45 @@ Vue.component('notes', {
         note(notes, item) {
             if (item.complete) {}
             else item.complete = true;
-
             let sum = 0.0;
             for (let i = 0; i < notes.notes.length; i++) {
                 if(notes.notes[i].complete === true) {sum++}
             }
             console.log(sum);
-
             let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
 
-            if (sum / notes.notes.length  > 0.5 && progressNotesCount <= 4)
+            if (sum / notes.notes.length > 0.5 && progressNotesCount <= 4)
             {notes.notesProcess = 'progress'}
-
-            if (sum / notes.notes.length  === 1 ) {notes.notesProcess = 'complete'}
+            if (sum / notes.notes.length === 1 ) {notes.notesProcess = 'complete'}
 
             console.log(sum /notes.notes.length);
             sum = 0.0;
             this.disableFirstColumns = false;
-
             notes.notesDate = Date();
             console.log(notes.notesDate + ' ' + Date.now());
             this.saveData()
         },
+        moveEligibleNotes() {
+            let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
+            this.notes.forEach(note => {
+                if (note.notesProcess === 'new') {
+                    let completedCount = note.notes.filter(task => task.complete).length;
+                    let percent = completedCount / note.notes.length;
+
+                    if (percent >= 0.5 && progressNotesCount < 5) {
+                        note.notesProcess = 'progress';
+                        progressNotesCount++;
+                    }
+                }
+            });
+            this.saveData();
+        },
         checkOnFree(item, i) {
             let progressNotesCount = this.notes.filter(n => n.notesProcess === 'progress').length;
-
             let sum = 0.0;
             for (let j = 0; j < item.notes.length; j++) {
                 if(item.notes[j].complete === true) {sum++}
             }
-
             console.log(sum);
 
             if (progressNotesCount < 5) {
@@ -180,12 +196,14 @@ Vue.component('notes', {
                 this.disableFirstColumns = false;
             } else {
                 this.errors = 'Во втором столбце не может быть больше 5 заметок';
-                if (sum / item.notes.length < 0.5) {
+                if (sum / item.notes.length <= 0.5) {
                     this.note(item, i);
-                }
-                else {
+                } else {
                     this.disableFirstColumns = true;
                 }
+            }
+            if (this.disableFirstColumns === false && sum / item.notes.length > 0.5 && item.notesProcess === 'new') {
+                item.notesProcess = 'progress';
             }
         },
         saveData() { localStorage.setItem('notes', JSON.stringify(this.notes)) }
