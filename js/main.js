@@ -99,7 +99,7 @@ Vue.component('notes', {
                 }
             }
 
-            if (countNewNote < 3) {
+            if (countNewNote < 3 && this.disableFirstColumns === false) {
                 if (!this.name) {
                     this.notesName = 'Имя заметки';
                 }
